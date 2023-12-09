@@ -1,6 +1,7 @@
 package net.workhub.employeeservice.controller;
 
 import lombok.AllArgsConstructor;
+import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
 import net.workhub.employeeservice.exception.ErrorDetails;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
@@ -29,8 +30,8 @@ public class EmployeeController {
 
     // Get employee REST API
     @GetMapping("{employee-id}")
-    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("employee-id") Long employeeId) {
-        EmployeeDto employee = employeeService.getEmployeeById(employeeId);
+    public ResponseEntity<EmployeeDetailDto> getEmployee(@PathVariable("employee-id") Long employeeId) {
+        EmployeeDetailDto employee = employeeService.getEmployeeById(employeeId);
         return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package net.workhub.employeeservice.service;
 
+import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 public interface EmployeeService {
     EmployeeDto saveEmployee(EmployeeDto employeeDto);
 
-    EmployeeDto getEmployeeById(Long id);
+    EmployeeDetailDto getEmployeeById(Long id);
 
     EmployeeDto updateEmployeeById(EmployeeDto employeeDto);
 

@@ -1,6 +1,8 @@
 package net.workhub.employeeservice.service.impl;
 
 import lombok.AllArgsConstructor;
+import net.workhub.employeeservice.dto.DepartmentDto;
+import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
 import net.workhub.employeeservice.entity.Employee;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
@@ -9,6 +11,7 @@ import net.workhub.employeeservice.repository.EmployeeRepository;
 import net.workhub.employeeservice.service.EmployeeService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
+
+    private WebClient webClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -30,17 +35,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long id) {
+    public EmployeeDetailDto getEmployeeById(Long id) {
 
         Employee employee = employeeRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Employee", "id", id)
         );
 
-        return EmployeeMapper.mapToEmployeeDto(employee);
+        EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
+
+        DepartmentDto departmentDto = webClient.get()
+                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+                .retrieve()
+                .bodyToMono(DepartmentDto.class)
+                .block();
+
+        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto);
     }
 
     @Override
     public EmployeeDto updateEmployeeById(EmployeeDto employeeDto) {
+
         Employee existingEmployee = employeeRepository.findById(employeeDto.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("Employee", "id", employeeDto.getId())
         );
@@ -48,6 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         existingEmployee.setFirstName(employeeDto.getFirstName());
         existingEmployee.setLastName(employeeDto.getLastName());
         existingEmployee.setEmail(employeeDto.getEmail());
+        existingEmployee.setDepartmentCode(employeeDto.getDepartmentCode());
 
         Employee savedEmployee = employeeRepository.save(existingEmployee);
 
