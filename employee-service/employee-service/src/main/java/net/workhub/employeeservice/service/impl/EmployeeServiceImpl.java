@@ -8,6 +8,7 @@ import net.workhub.employeeservice.entity.Employee;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
 import net.workhub.employeeservice.mapper.EmployeeMapper;
 import net.workhub.employeeservice.repository.EmployeeRepository;
+import net.workhub.employeeservice.service.APIClient;
 import net.workhub.employeeservice.service.EmployeeService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,7 +23,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
-    private WebClient webClient;
+    // private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -43,11 +45,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
-        DepartmentDto departmentDto = webClient.get()
-                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+//        DepartmentDto departmentDto = webClient.get()
+//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+//                .retrieve()
+//                .bodyToMono(DepartmentDto.class)
+//                .block();
+
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto);
     }
