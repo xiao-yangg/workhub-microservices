@@ -8,6 +8,7 @@ Concepts
   * Service Registry
   * API Gateway
   * Config Server
+  * Distributed Tracing
 * RabbitMQ
 
 
