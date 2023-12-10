@@ -7,6 +7,8 @@ Concepts
 * Spring Cloud
   * Service Registry
   * API Gateway
+  * Config Server
+* RabbitMQ
 
 
 ### Acknowledgement
