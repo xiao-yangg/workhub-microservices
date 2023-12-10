@@ -1,5 +1,7 @@
 package net.workhub.employeeservice.service.impl;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
@@ -10,6 +12,8 @@ import net.workhub.employeeservice.mapper.EmployeeMapper;
 import net.workhub.employeeservice.repository.EmployeeRepository;
 import net.workhub.employeeservice.service.APIClient;
 import net.workhub.employeeservice.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
     private EmployeeRepository employeeRepository;
 
@@ -36,6 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
 
+    @Retry(name="${spring.application.name}", fallbackMethod="getDefaultDepartment")
+    @CircuitBreaker(name="${spring.application.name}", fallbackMethod="getDefaultDepartment")
     @Override
     public EmployeeDetailDto getEmployeeById(Long id) {
 
@@ -89,5 +97,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees = employeeRepository.findAll();
 
         return employees.stream().map((EmployeeMapper::mapToEmployeeDto)).collect(Collectors.toList());
+    }
+
+    public EmployeeDetailDto getDefaultDepartment(Long id, Exception exception) {
+
+        LOGGER.info("entering fallback method");
+
+        Employee employee = employeeRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Employee", "id", id)
+        );
+
+        EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
+
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setDepartmentName("unknown");
+        departmentDto.setDepartmentCode("unknown");
+        departmentDto.setDepartmentDescription("unknown");
+
+        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto);
     }
 }
