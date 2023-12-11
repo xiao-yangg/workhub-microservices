@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
+import net.workhub.employeeservice.dto.OrganizationDto;
 import net.workhub.employeeservice.entity.Employee;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
 import net.workhub.employeeservice.mapper.EmployeeMapper;
@@ -15,7 +16,6 @@ import net.workhub.employeeservice.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -29,8 +29,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
-    // private WebClient webClient;
-    private APIClient apiClient;
+    private WebClient webClient;
+    // private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -42,8 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
 
-    @Retry(name="${spring.application.name}", fallbackMethod="getDefaultDepartment")
-    @CircuitBreaker(name="${spring.application.name}", fallbackMethod="getDefaultDepartment")
+    @Retry(name="${spring.application.name}", fallbackMethod="getDefault")
+    @CircuitBreaker(name="${spring.application.name}", fallbackMethod="getDefault")
     @Override
     public EmployeeDetailDto getEmployeeById(Long id) {
 
@@ -53,15 +53,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
-//        DepartmentDto departmentDto = webClient.get()
-//                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-//                .retrieve()
-//                .bodyToMono(DepartmentDto.class)
-//                .block();
+        DepartmentDto departmentDto = webClient.get()
+                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
+                .retrieve()
+                .bodyToMono(DepartmentDto.class)
+                .block();
 
-        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        OrganizationDto organizationDto = webClient.get()
+                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
 
-        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto);
+        // DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+        // OrganizationDto organizationDto = apiClient.getOrganization(employee.getOrganizationCode());
+
+        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto, organizationDto);
     }
 
     @Override
@@ -99,7 +106,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employees.stream().map((EmployeeMapper::mapToEmployeeDto)).collect(Collectors.toList());
     }
 
-    public EmployeeDetailDto getDefaultDepartment(Long id, Exception exception) {
+    public EmployeeDetailDto getDefault(Long id, Exception exception) {
 
         LOGGER.info("entering fallback method");
 
@@ -114,6 +121,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         departmentDto.setDepartmentCode("unknown");
         departmentDto.setDepartmentDescription("unknown");
 
-        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto);
+        OrganizationDto organizationDto = new OrganizationDto();
+        organizationDto.setOrganizationName("unknown");
+        organizationDto.setOrganizationCode("unknown");
+        organizationDto.setOrganizationDescription("unknown");
+
+        return EmployeeMapper.mapToEmployeeDetailDto(employeeDto, departmentDto, organizationDto);
     }
 }

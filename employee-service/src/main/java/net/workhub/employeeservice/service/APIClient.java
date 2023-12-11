@@ -1,6 +1,7 @@
 package net.workhub.employeeservice.service;
 
 import net.workhub.employeeservice.dto.DepartmentDto;
+import net.workhub.employeeservice.dto.OrganizationDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,6 +3,7 @@ package net.workhub.employeeservice.mapper;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
+import net.workhub.employeeservice.dto.OrganizationDto;
 import net.workhub.employeeservice.entity.Employee;
 
 public class EmployeeMapper {
@@ -14,7 +15,8 @@ public class EmployeeMapper {
                 employeeDto.getFirstName(),
                 employeeDto.getLastName(),
                 employeeDto.getEmail(),
-                employeeDto.getDepartmentCode()
+                employeeDto.getDepartmentCode(),
+                employeeDto.getOrganizationCode()
         );
     }
 
@@ -25,11 +27,12 @@ public class EmployeeMapper {
                 employee.getFirstName(),
                 employee.getLastName(),
                 employee.getEmail(),
-                employee.getDepartmentCode()
+                employee.getDepartmentCode(),
+                employee.getOrganizationCode()
         );
     }
 
-    public static EmployeeDetailDto mapToEmployeeDetailDto(EmployeeDto employeeDto, DepartmentDto departmentDto) {
+    public static EmployeeDetailDto mapToEmployeeDetailDto(EmployeeDto employeeDto, DepartmentDto departmentDto, OrganizationDto organizationDto) {
 
         return new EmployeeDetailDto(
                 employeeDto.getId(),
@@ -37,7 +40,9 @@ public class EmployeeMapper {
                 employeeDto.getLastName(),
                 employeeDto.getEmail(),
                 employeeDto.getDepartmentCode(),
-                departmentDto
+                departmentDto,
+                employeeDto.getOrganizationCode(),
+                organizationDto
         );
     }
 }
