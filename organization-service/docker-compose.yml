@@ -1,0 +1,24 @@
+version: "1.0"
+services:
+  mysql_db:
+    container_name: mysql_latest
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: organization_db
+    networks:
+      organization-service-net:
+
+  organization_service:
+    container_name: organization_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    networks:
+      organization-service-net:
+    restart: on-failure
+
+networks:
+  organization-service-net:
