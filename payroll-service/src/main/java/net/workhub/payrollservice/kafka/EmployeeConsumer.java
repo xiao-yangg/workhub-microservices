@@ -21,7 +21,7 @@ public class EmployeeConsumer {
 
     @KafkaListener(topics="${spring.kafka.topic.name}", groupId="${spring.kafka.consumer.group-id}")
     public void consume(DomainEmployeeEvent event) {
-        LOGGER.info(String.format("(Payroll Service) Event received => %s", event.toString()));
+        LOGGER.info(String.format("(Payroll Service) Event received via Kafka => %s", event.toString()));
 
         // Save employee event into database
         Payroll payroll = new Payroll();

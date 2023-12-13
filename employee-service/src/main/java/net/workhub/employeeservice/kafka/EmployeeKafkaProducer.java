@@ -11,21 +11,21 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmployeeProducer {
+public class EmployeeKafkaProducer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeKafkaProducer.class);
 
     private NewTopic topic;
 
     private KafkaTemplate<String, DomainEmployeeEvent> kafkaTemplate;
 
-    public EmployeeProducer(NewTopic topic, KafkaTemplate<String, DomainEmployeeEvent> kafkaTemplate) {
+    public EmployeeKafkaProducer(NewTopic topic, KafkaTemplate<String, DomainEmployeeEvent> kafkaTemplate) {
         this.topic = topic;
         this.kafkaTemplate = kafkaTemplate;
     }
 
     public void sendMessage(DomainEmployeeEvent event) {
-        LOGGER.info(String.format("(Employee Service) Event sent => %s", event.toString()));
+        LOGGER.info(String.format("(Employee Service) Event sent via Kafka => %s", event.toString()));
 
         // Create message
         Message<DomainEmployeeEvent> message = MessageBuilder.withPayload(event)

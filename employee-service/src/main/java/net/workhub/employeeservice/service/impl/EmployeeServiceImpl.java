@@ -3,7 +3,6 @@ package net.workhub.employeeservice.service.impl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
-import net.workhub.basedomains.dto.DomainEmployee;
 import net.workhub.basedomains.dto.DomainEmployeeEvent;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
@@ -11,8 +10,9 @@ import net.workhub.employeeservice.dto.EmployeeDto;
 import net.workhub.employeeservice.dto.OrganizationDto;
 import net.workhub.employeeservice.entity.Employee;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
-import net.workhub.employeeservice.kafka.EmployeeProducer;
+import net.workhub.employeeservice.kafka.EmployeeKafkaProducer;
 import net.workhub.employeeservice.mapper.EmployeeMapper;
+import net.workhub.employeeservice.rabbitmq.EmployeeRabbitMQProducer;
 import net.workhub.employeeservice.repository.EmployeeRepository;
 import net.workhub.employeeservice.service.EmployeeService;
 import org.slf4j.Logger;
@@ -34,7 +34,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private WebClient webClient;
     // private APIClient apiClient;
 
-    private EmployeeProducer employeeProducer;
+    private EmployeeKafkaProducer employeeKafkaProducer;
+
+    private EmployeeRabbitMQProducer employeeRabbitMQProducer;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -47,7 +49,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         domainEmployeeEvent.setStatus("APPROVED");
         domainEmployeeEvent.setMessage("employee successfully onboard");
         domainEmployeeEvent.setDomainEmployee(EmployeeMapper.mapToDomainEmployee(savedEmployee));
-        employeeProducer.sendMessage(domainEmployeeEvent);
+        employeeKafkaProducer.sendMessage(domainEmployeeEvent);
+        employeeRabbitMQProducer.sendMessage(domainEmployeeEvent);
 
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }

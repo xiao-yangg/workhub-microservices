@@ -13,7 +13,7 @@ public class EmployeeConsumer {
 
     @KafkaListener(topics="${spring.kafka.topic.name}", groupId="${spring.kafka.consumer.group-id}")
     public void consume(DomainEmployeeEvent event) {
-        LOGGER.info(String.format("(Email Service) Event received => %s", event.toString()));
+        LOGGER.info(String.format("(Email Service) Event received via Kafka => %s", event.toString()));
 
         // Send email to employee
     }
