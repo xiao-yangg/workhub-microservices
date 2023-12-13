@@ -1,5 +1,6 @@
 package net.workhub.employeeservice.mapper;
 
+import net.workhub.basedomains.dto.DomainEmployee;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
@@ -43,6 +44,17 @@ public class EmployeeMapper {
                 departmentDto,
                 employeeDto.getOrganizationCode(),
                 organizationDto
+        );
+    }
+
+    public static DomainEmployee mapToDomainEmployee(Employee employee) {
+        return new DomainEmployee(
+                employee.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getEmail(),
+                employee.getDepartmentCode(),
+                employee.getOrganizationCode()
         );
     }
 }

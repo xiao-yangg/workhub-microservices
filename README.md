@@ -11,6 +11,8 @@ Concepts
   * Distributed Tracing
   * [Circuit Breaker](https://medium.com/javarevisited/what-is-circuit-breaker-in-microservices-a94f95f5e5ae)
 * RabbitMQ
+* Kafka
+* Docker
 
 
 ### Acknowledgement

@@ -13,6 +13,7 @@ import lombok.Setter;
 @Entity
 @Table(name="departments")
 public class Department {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key
     private Long id;

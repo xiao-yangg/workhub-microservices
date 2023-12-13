@@ -3,15 +3,17 @@ package net.workhub.employeeservice.service.impl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
+import net.workhub.basedomains.dto.DomainEmployee;
+import net.workhub.basedomains.dto.DomainEmployeeEvent;
 import net.workhub.employeeservice.dto.DepartmentDto;
 import net.workhub.employeeservice.dto.EmployeeDetailDto;
 import net.workhub.employeeservice.dto.EmployeeDto;
 import net.workhub.employeeservice.dto.OrganizationDto;
 import net.workhub.employeeservice.entity.Employee;
 import net.workhub.employeeservice.exception.ResourceNotFoundException;
+import net.workhub.employeeservice.kafka.EmployeeProducer;
 import net.workhub.employeeservice.mapper.EmployeeMapper;
 import net.workhub.employeeservice.repository.EmployeeRepository;
-import net.workhub.employeeservice.service.APIClient;
 import net.workhub.employeeservice.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +34,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     private WebClient webClient;
     // private APIClient apiClient;
 
+    private EmployeeProducer employeeProducer;
+
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
 
         Employee savedEmployee = employeeRepository.save(employee);
+
+        DomainEmployeeEvent domainEmployeeEvent = new DomainEmployeeEvent();
+        domainEmployeeEvent.setStatus("APPROVED");
+        domainEmployeeEvent.setStatus("employee status is approved");
+        domainEmployeeEvent.setDomainEmployee(EmployeeMapper.mapToDomainEmployee(savedEmployee));
+        employeeProducer.sendMessage(domainEmployeeEvent);
 
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
