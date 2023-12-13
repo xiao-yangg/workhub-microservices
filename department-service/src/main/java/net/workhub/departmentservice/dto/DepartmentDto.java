@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Schema(
         description="DepartmentDto Model Information"
 )
@@ -15,7 +17,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DepartmentDto {
     private Long id;
-
     @Schema(
             description="Department Name"
     )
@@ -28,4 +29,5 @@ public class DepartmentDto {
             description="Department Code"
     )
     private String departmentCode;
+    private LocalDateTime createdDate;
 }

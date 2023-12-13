@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,4 +20,5 @@ public class EmployeeDetailDto {
     private DepartmentDto department;
     private String organizationCode;
     private OrganizationDto organization;
+    private LocalDateTime createdDate;
 }

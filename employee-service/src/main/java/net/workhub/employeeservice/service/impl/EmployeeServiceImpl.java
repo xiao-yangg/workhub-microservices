@@ -45,7 +45,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         DomainEmployeeEvent domainEmployeeEvent = new DomainEmployeeEvent();
         domainEmployeeEvent.setStatus("APPROVED");
-        domainEmployeeEvent.setStatus("employee status is approved");
+        domainEmployeeEvent.setMessage("employee successfully onboard");
         domainEmployeeEvent.setDomainEmployee(EmployeeMapper.mapToDomainEmployee(savedEmployee));
         employeeProducer.sendMessage(domainEmployeeEvent);
 

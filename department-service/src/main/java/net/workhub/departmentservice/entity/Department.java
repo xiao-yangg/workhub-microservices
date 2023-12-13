@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,9 +21,14 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // primary key
     private Long id;
 
+    @Column(nullable = false)
     private String departmentName;
 
     private String departmentDescription;
 
+    @Column(nullable = false, unique = true)
     private String departmentCode;
+
+    @CreationTimestamp
+    private LocalDateTime createdDate;
 }

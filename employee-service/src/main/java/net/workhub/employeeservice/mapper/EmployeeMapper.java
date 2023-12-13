@@ -17,7 +17,8 @@ public class EmployeeMapper {
                 employeeDto.getLastName(),
                 employeeDto.getEmail(),
                 employeeDto.getDepartmentCode(),
-                employeeDto.getOrganizationCode()
+                employeeDto.getOrganizationCode(),
+                employeeDto.getCreatedDate()
         );
     }
 
@@ -29,7 +30,8 @@ public class EmployeeMapper {
                 employee.getLastName(),
                 employee.getEmail(),
                 employee.getDepartmentCode(),
-                employee.getOrganizationCode()
+                employee.getOrganizationCode(),
+                employee.getCreatedDate()
         );
     }
 
@@ -43,11 +45,13 @@ public class EmployeeMapper {
                 employeeDto.getDepartmentCode(),
                 departmentDto,
                 employeeDto.getOrganizationCode(),
-                organizationDto
+                organizationDto,
+                employeeDto.getCreatedDate()
         );
     }
 
     public static DomainEmployee mapToDomainEmployee(Employee employee) {
+
         return new DomainEmployee(
                 employee.getId(),
                 employee.getFirstName(),

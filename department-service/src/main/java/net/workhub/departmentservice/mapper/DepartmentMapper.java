@@ -10,7 +10,8 @@ public class DepartmentMapper {
                 department.getId(),
                 department.getDepartmentName(),
                 department.getDepartmentDescription(),
-                department.getDepartmentCode()
+                department.getDepartmentCode(),
+                department.getCreatedDate()
         );
     }
 
@@ -19,7 +20,8 @@ public class DepartmentMapper {
                 departmentDto.getId(),
                 departmentDto.getDepartmentName(),
                 departmentDto.getDepartmentDescription(),
-                departmentDto.getDepartmentCode()
+                departmentDto.getDepartmentCode(),
+                departmentDto.getCreatedDate()
         );
     }
 }

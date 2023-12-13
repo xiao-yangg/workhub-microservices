@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -28,4 +31,7 @@ public class Employee {
     private String departmentCode;
 
     private String organizationCode;
+
+    @CreationTimestamp
+    private LocalDateTime createdDate;
 }
